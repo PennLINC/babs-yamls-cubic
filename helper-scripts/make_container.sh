@@ -7,8 +7,12 @@ read -p "Enter version with dashes (e.g., 24-1-1): " version_dash
 read -p "Enter host (e.g., nipreps): " host
 
 # Define paths
-apptainer_path=/cbica/projects/grmpy/data/BABS/apptainer
-apptainer_ds_path=/cbica/projects/grmpy/data/BABS/apptainer-datasets
+apptainer_path=/cbica/projects/yourproject/path/to/apptainer # [FIX ME] path to where you want to build container sifs
+apptainer_ds_path=/cbica/projects/yourproject/path/to/apptainer-datasets # [FIX ME] path to where you want to create container-ds
+
+# Make directories if they do no already exist
+mkdir -p ${apptainer_path}
+mkdir -p ${apptainer_ds_path}
 
 # Build the container
 echo "Building ${app} container version ${version}..."
