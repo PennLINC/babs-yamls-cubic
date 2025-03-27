@@ -1,0 +1,77 @@
+# This is an example config yaml file for:
+#   BIDS App:         fMRIPrep ("fmriprep")
+#   BIDS App version: 24-1-1
+#   Task:             `--anat-only` mode
+#   Which system:     SGE or Slurm
+
+# WARNING!!!
+#   This is only an example, which may not necessarily fit your purpose,
+#   or be an optimized solution for your case,
+#   or be compatible to the BIDS App version you're using.
+#   Therefore, please change and tailor it for your case before use it!!!
+
+# Arguments in `singularity run`:
+bids_app_args:
+    $SUBJECT_SELECTION_FLAG: "--participant-label"
+    -w: "$BABS_TMPDIR"
+    --stop-on-first-crash: ""
+    --fs-license-file: "/cbica/software/external/freesurfer/centos7/5.3.0/license.txt" # [FIX ME] path to FreeSurfer license file
+    --output-spaces: "MNI152NLin6Asym:res-1"
+    --force-bbr: ""
+    --skip-bids-validation: ""
+    -vv: ""
+    --anat-only: "" #runs only anatomical workflow of fmriprep
+    --cifti-output: "91k"
+    --n_cpus: "2"
+    --mem-mb: "12000"
+
+# Output foldername(s) to be zipped, and the BIDS App version to be included in the zip filename(s):
+#   As fMRIPrep will use BIDS output layout, we need to ask BABS to create a folder 'fmriprep_anat' to wrap all derivatives:
+all_results_in_one_zip: true
+zip_foldernames:
+    fmriprep_anat: "24-1-1" # folder 'fmriprep_anat' will be zipped into 'sub-xx_(ses-yy_)fmriprep_anat-24-1-1.zip'
+# Note: The generated data can also be used to provide FreeSurfer derivatives as input dataset when running fMRIPrep on fMRI data,
+#   i.e., for use case: fMRIPrep with FreeSurfer results ingressed.
+#   For that case, when using `babs init`, for `--datasets`, please call this FreeSurfer derivatives dataset 'fmriprep_anat'.
+
+# Arguments that are passed directly to singularity/apptainer:
+singularity_args:
+    - --containall
+    - --writable-tmpfs
+
+# How much cluster resources it needs:
+cluster_resources:
+    interpreting_shell: "/bin/bash"
+    hard_runtime_limit: "24:00:00"
+    temporary_disk_space: 200G
+    customized_text: |
+        #SBATCH -p all
+        #SBATCH --nodes=1
+        #SBATCH --ntasks=1
+        #SBATCH --cpus-per-task=2
+        #SBATCH --mem=12G
+        #SBATCH --propagate=NONE
+
+# Necessary commands to be run first:
+#   [FIX ME] change or add commands for setting up the virtual environment, for loading necessary modules, etc
+script_preamble: |
+    eval "$(micromamba shell hook --shell bash)"
+    micromamba activate babs
+
+# Where to run the jobs:
+job_compute_space: "${TMPDIR}" # [FIX ME] replace "/path/to/temporary_compute_space" with yours
+
+# Below is to filter out subjects (or sessions). Only those with required files will be kept.
+required_files:
+    $INPUT_DATASET_#1:
+        - "anat/*_T1w.nii*"
+
+# Alert messages that might be found in log files of failed jobs:
+#   These messages may be helpful for debugging errors in failed jobs.
+alert_log_messages:
+    stdout:
+        - "Excessive topologic defect encountered"
+        - "Cannot allocate memory"
+        - "mris_curvature_stats: Could not open file"
+        - "Numerical result out of range"
+        - "fMRIPrep failed"
