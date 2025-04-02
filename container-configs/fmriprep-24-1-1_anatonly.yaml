@@ -1,6 +1,6 @@
 # This is an example config yaml file for:
 #   BIDS App:         fMRIPrep ("fmriprep")
-#   BIDS App version: 25-0-0
+#   BIDS App version: 24-1-1
 #   Task:             `--anat-only` mode
 #   Which system:     SGE or Slurm
 
