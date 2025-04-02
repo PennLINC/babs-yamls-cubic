@@ -119,11 +119,23 @@ cd "$ANAT_DIR" || { echo "ERROR: Could not change to directory: $ANAT_DIR"; exit
 
 # Build the defaced filename with different recording labels for T1w and T2w
 if [[ "$ANAT_BASENAME" == *"_T1w.nii.gz" ]]; then
-  # For T1w, use "rec-refaced"
-  DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/\(_T1w\)\.nii\.gz$/_rec-refaced\1.nii.gz/')"
+  # For T1w, handle existing rec- entity or add new one
+  if [[ "$ANAT_BASENAME" == *"_rec-"* ]]; then
+    # Add refaced to existing rec-X (becoming rec-Xrefaced)
+    DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/_rec-\([^_]*\)/_rec-\1refaced/')"
+  else
+    # Insert rec-refaced before T1w
+    DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/\(_T1w\.nii\.gz\)/_rec-refaced\1/')"
+  fi
 elif [[ "$ANAT_BASENAME" == *"_T2w.nii.gz" ]]; then
-  # For T2w, use "rec-defaced"
-  DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/\(_T2w\)\.nii\.gz$/_rec-defaced\1.nii.gz/')"
+  # For T2w, handle existing rec- entity or add new one
+  if [[ "$ANAT_BASENAME" == *"_rec-"* ]]; then
+    # Add defaced to existing rec-X (becoming rec-Xdefaced)
+    DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/_rec-\([^_]*\)/_rec-\1defaced/')"
+  else
+    # Insert rec-defaced before T2w
+    DEFACED_BASENAME="$(echo "$ANAT_BASENAME" | sed 's/\(_T2w\.nii\.gz\)/_rec-defaced\1/')"
+  fi
 else
   echo "ERROR: Unrecognized file type: $ANAT_BASENAME"
   exit 1
