@@ -172,20 +172,22 @@ JSON_BASENAME="${ANAT_BASENAME%.nii.gz}.json"
 if [ -f "$JSON_BASENAME" ]; then
   # Use the same naming convention as the NIfTI file
   if [[ "$ANAT_BASENAME" == *"_T1w.nii.gz" ]]; then
-    DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/\(_T1w\)\.json$/_rec-refaced\1.json/')"
-  else
-    DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/\(_T2w\)\.json$/_rec-defaced\1.json/')"
+    if [[ "$JSON_BASENAME" == *"_rec-"* ]]; then
+      # Add refaced to existing rec-X (becoming rec-Xrefaced)
+      DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/_rec-\([^_]*\)/_rec-\1refaced/')"
+    else
+      # Insert rec-refaced before T1w
+      DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/\(_T1w\)\.json$/_rec-refaced\1.json/')"
+    fi
+  elif [[ "$ANAT_BASENAME" == *"_T2w.nii.gz" ]]; then
+    if [[ "$JSON_BASENAME" == *"_rec-"* ]]; then
+      # Add defaced to existing rec-X (becoming rec-Xdefaced)
+      DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/_rec-\([^_]*\)/_rec-\1defaced/')"
+    else
+      # Insert rec-defaced before T2w
+      DEFACED_JSON_BASENAME="$(echo "$JSON_BASENAME" | sed 's/\(_T2w\)\.json$/_rec-defaced\1.json/')"
+    fi
   fi
-
-  echo "JSON sidecar found:   $JSON_BASENAME"
-  echo "Renaming to:          $DEFACED_JSON_BASENAME"
-
-  # Copy the content to the new filename
-  cp "${JSON_BASENAME}" "$DEFACED_JSON_BASENAME"
-
-  # Remove the original JSON
-  rm "${JSON_BASENAME}"
-fi
 
 # Clean up only if T1w (AFNI refacer leaves extra files)
 if [[ "$ANAT_BASENAME" == *"_T1w.nii.gz" ]]; then
