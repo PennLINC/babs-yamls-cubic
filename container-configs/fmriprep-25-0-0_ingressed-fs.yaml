@@ -19,7 +19,7 @@
 #     fmriprep_anat=<path/to/cloned_fmriprep_anat_output_ria>    # 2nd input dataset \
 bids_app_args:
     $SUBJECT_SELECTION_FLAG: "--participant-label"
-    $INPUT_PATH: inputs/data/BIDS # [FIX ME] the path to your BIDS dataset, which must be included first as there are two input datasets
+    $INPUT_PATH: "inputs/data/BIDS" # [FIX ME] the path to your BIDS dataset, which must be included first as there are two input datasets
     -w: "$BABS_TMPDIR"
     --stop-on-first-crash: ""
     --fs-license-file: "/cbica/software/external/freesurfer/centos7/5.3.0/license.txt"
