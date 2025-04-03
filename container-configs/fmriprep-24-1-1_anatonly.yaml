@@ -15,7 +15,7 @@ bids_app_args:
     $SUBJECT_SELECTION_FLAG: "--participant-label"
     -w: "$BABS_TMPDIR"
     --stop-on-first-crash: ""
-    --fs-license-file: "/cbica/software/external/freesurfer/centos7/5.3.0/license.txt" # [FIX ME] path to FreeSurfer license file
+    --fs-license-file: "/cbica/software/external/freesurfer/centos7/5.3.0/license.txt"
     --output-spaces: "MNI152NLin6Asym:res-1"
     --force-bbr: ""
     --skip-bids-validation: ""
@@ -53,7 +53,6 @@ cluster_resources:
         #SBATCH --propagate=NONE
 
 # Necessary commands to be run first:
-#   [FIX ME] change or add commands for setting up the virtual environment, for loading necessary modules, etc
 script_preamble: |
     eval "$(micromamba shell hook --shell bash)"
     micromamba activate babs
