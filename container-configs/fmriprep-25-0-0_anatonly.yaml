@@ -17,7 +17,7 @@ bids_app_args:
     --stop-on-first-crash: ""
     --fs-license-file: "/cbica/software/external/freesurfer/centos7/5.3.0/license.txt"
     --output-spaces: "MNI152NLin6Asym:res-1"
-    -force: "bbr"
+    --force: "bbr"
     --skip-bids-validation: ""
     -vv: ""
     --anat-only: "" #runs only anatomical workflow of fmriprep
